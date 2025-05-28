@@ -1,0 +1,114 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Mapa de Actores</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 2em; background: #f0f4f8; color: #333; text-align: center; }
+    h1 { color: #3f51b5; }
+    .option {
+      display: block;
+      margin: 0.5em auto;
+      padding: 0.5em 1em;
+      width: 60%;
+      background: white;
+      border: 2px solid #3f51b5;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .option:hover { background: #e8eaf6; }
+    .correct { background-color: #c8e6c9; border-color: green; }
+    .incorrect { background-color: #ffcdd2; border-color: red; }
+    #feedback { margin-top: 1em; font-weight: bold; }
+    #nextBtn {
+      margin-top: 1em;
+      padding: 0.6em 1.2em;
+      background: #3f51b5;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <h1>Mapa de Actores</h1>
+  <p id="question">¿Cuál de los siguientes es un actor relevante en una comunidad educativa?</p>
+  <div id="options"></div>
+  <div id="feedback"></div>
+  <button id="nextBtn" onclick="siguiente()">Siguiente</button>
+
+  <script>
+    const preguntas = [
+      {
+        texto: "¿Cuál de los siguientes es un actor relevante en una comunidad educativa?",
+        opciones: ["Docente", "Visitante ocasional", "Turista"],
+        correcta: "Docente"
+      },
+      {
+        texto: "¿Qué persona participa activamente en la formación del estudiante?",
+        opciones: ["Padre de familia", "Cartero", "Conductor de autobús ajeno"],
+        correcta: "Padre de familia"
+      },
+      {
+        texto: "¿Cuál de los siguientes actores toma decisiones administrativas en la institución?",
+        opciones: ["Director", "Alumno nuevo", "Portero eventual"],
+        correcta: "Director"
+      }
+    ];
+
+    let actual = 0;
+
+    function cargarPregunta() {
+      const p = preguntas[actual];
+      document.getElementById("question").textContent = p.texto;
+
+      const opcionesDiv = document.getElementById("options");
+      opcionesDiv.innerHTML = "";
+
+      p.opciones.forEach(op => {
+        const btn = document.createElement("button");
+        btn.textContent = op;
+        btn.className = "option";
+        btn.onclick = () => evaluar(btn, op === p.correcta);
+        opcionesDiv.appendChild(btn);
+      });
+
+      document.getElementById("feedback").textContent = "";
+      document.getElementById("nextBtn").style.display = "none";
+    }
+
+    function evaluar(btn, esCorrecta) {
+      document.querySelectorAll(".option").forEach(b => {
+        b.disabled = true;
+        b.style.cursor = "default";
+      });
+
+      if (esCorrecta) {
+        btn.classList.add("correct");
+        document.getElementById("feedback").textContent = "✅ ¡Correcto! Es un actor clave en el entorno educativo.";
+      } else {
+        btn.classList.add("incorrect");
+        document.getElementById("feedback").textContent = "❌ Incorrecto. Ese actor no tiene participación directa en la comunidad escolar.";
+      }
+
+      document.getElementById("nextBtn").style.display = "inline-block";
+    }
+
+    function siguiente() {
+      actual++;
+      if (actual < preguntas.length) {
+        cargarPregunta();
+      } else {
+        document.body.innerHTML = "<h1>🎉 ¡Has finalizado el juego de Mapa de Actores!</h1>";
+      }
+    }
+
+    cargarPregunta();
+  </script>
+</body>
+</html>

@@ -1,0 +1,126 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Clasificación PESTEL</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 2em; background: #f0f4f8; color: #333; text-align: center; }
+    h1 { color: #3f51b5; }
+    .option {
+      display: block;
+      margin: 1em auto;
+      padding: 0.6em 1.2em;
+      width: 60%;
+      background: white;
+      border: 2px solid #3f51b5;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .option:hover { background: #e8eaf6; }
+    .correct { background-color: #c8e6c9; border-color: green; }
+    .incorrect { background-color: #ffcdd2; border-color: red; }
+    #feedback { margin-top: 1em; font-weight: bold; }
+    #nextBtn {
+      margin-top: 1.5em;
+      padding: 0.6em 1.2em;
+      background-color: #3f51b5;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <h1>Clasificación PESTEL</h1>
+  <p id="question">¿A qué categoría pertenece...?</p>
+  <div id="options"></div>
+  <div id="feedback"></div>
+  <button id="nextBtn" onclick="siguiente()">Siguiente</button>
+
+  <script>
+    const preguntas = [
+      {
+        texto: "‘Impuestos a empresas’",
+        opciones: ["Económica", "Tecnológica", "Legal"],
+        correcta: "Económica"
+      },
+      {
+        texto: "‘Nuevas leyes de privacidad de datos’",
+        opciones: ["Política", "Legal", "Social"],
+        correcta: "Legal"
+      },
+      {
+        texto: "‘Avances en inteligencia artificial’",
+        opciones: ["Tecnológica", "Ecológica", "Económica"],
+        correcta: "Tecnológica"
+      },
+      {
+        texto: "‘Conciencia sobre el cambio climático’",
+        opciones: ["Social", "Política", "Ecológica"],
+        correcta: "Ecológica"
+      },
+      {
+        texto: "‘Preferencias de los consumidores jóvenes’",
+        opciones: ["Tecnológica", "Ecológica", "Social"],
+        correcta: "Social"
+      }
+    ];
+
+    let actual = 0;
+
+    function cargarPregunta() {
+      const p = preguntas[actual];
+      document.getElementById("question").textContent = `¿A qué categoría pertenece ${p.texto}?`;
+
+      const contenedor = document.getElementById("options");
+      contenedor.innerHTML = "";
+
+      p.opciones.forEach(op => {
+        const btn = document.createElement("button");
+        btn.textContent = op;
+        btn.className = "option";
+        btn.onclick = () => validar(btn, op === p.correcta);
+        contenedor.appendChild(btn);
+      });
+
+      document.getElementById("feedback").textContent = "";
+      document.getElementById("nextBtn").style.display = "none";
+    }
+
+    function validar(boton, correcto) {
+      document.querySelectorAll(".option").forEach(b => {
+        b.disabled = true;
+        b.style.cursor = "default";
+      });
+
+      if (correcto) {
+        boton.classList.add("correct");
+        document.getElementById("feedback").textContent = "✅ ¡Correcto!";
+        document.getElementById("feedback").style.color = "green";
+      } else {
+        boton.classList.add("incorrect");
+        document.getElementById("feedback").textContent = "❌ Incorrecto.";
+        document.getElementById("feedback").style.color = "red";
+      }
+
+      document.getElementById("nextBtn").style.display = "inline-block";
+    }
+
+    function siguiente() {
+      actual++;
+      if (actual < preguntas.length) {
+        cargarPregunta();
+      } else {
+        document.body.innerHTML = "<h1>🎉 ¡Has completado el juego PESTEL!</h1>";
+      }
+    }
+
+    cargarPregunta();
+  </script>
+</body>
+</html>

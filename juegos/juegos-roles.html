@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Juego de Roles</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 2em; background: #f0f4f8; color: #333; text-align: center; }
+    h1 { color: #3f51b5; }
+    .role-btn, .option-btn {
+      padding: 0.6em 1.2em;
+      margin: 0.5em;
+      background-color: white;
+      border: 2px solid #3f51b5;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .role-btn:hover, .option-btn:hover {
+      background-color: #e8eaf6;
+    }
+    .correct { background-color: #c8e6c9; border-color: green; }
+    .incorrect { background-color: #ffcdd2; border-color: red; }
+    #feedback { margin-top: 1em; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h1>Juego de Roles</h1>
+  <div id="fase-seleccion">
+    <p>Selecciona tu rol para resolver el conflicto:</p>
+    <button class="role-btn" onclick="seleccionarRol('Estudiante')">Estudiante</button>
+    <button class="role-btn" onclick="seleccionarRol('Docente')">Docente</button>
+    <button class="role-btn" onclick="seleccionarRol('Director')">Director</button>
+  </div>
+
+  <div id="fase-conflicto" style="display:none;">
+    <p id="conflicto-texto"></p>
+    <div id="opciones"></div>
+    <div id="feedback"></div>
+  </div>
+
+  <script>
+    let rolSeleccionado = "";
+
+    const conflictos = {
+      "Estudiante": {
+        texto: "Un compañero está haciendo bullying a otro. ¿Qué haces?",
+        opciones: [
+          { texto: "Aviso al docente o a la dirección", correcta: true },
+          { texto: "Me uno a las burlas", correcta: false },
+          { texto: "Grabo el video y lo subo a redes", correcta: false }
+        ]
+      },
+      "Docente": {
+        texto: "Notas que dos estudiantes tienen un conflicto constante. ¿Qué haces?",
+        opciones: [
+          { texto: "Fomentas el diálogo en privado y con respeto", correcta: true },
+          { texto: "Ignoras el problema y sigues la clase", correcta: false },
+          { texto: "Los castigas sin preguntar", correcta: false }
+        ]
+      },
+      "Director": {
+        texto: "Un padre llega molesto por la evaluación de su hijo. ¿Qué haces?",
+        opciones: [
+          { texto: "Lo escuchas con respeto y solicitas evidencia al docente", correcta: true },
+          { texto: "Le gritas de vuelta", correcta: false },
+          { texto: "Suspendo al estudiante sin investigar", correcta: false }
+        ]
+      }
+    };
+
+    function seleccionarRol(rol) {
+      rolSeleccionado = rol;
+      document.getElementById("fase-seleccion").style.display = "none";
+      document.getElementById("fase-conflicto").style.display = "block";
+
+      const data = conflictos[rol];
+      document.getElementById("conflicto-texto").textContent = `Rol: ${rol} — ${data.texto}`;
+
+      const opcionesDiv = document.getElementById("opciones");
+      opcionesDiv.innerHTML = "";
+      data.opciones.forEach((op, index) => {
+        const btn = document.createElement("button");
+        btn.textContent = op.texto;
+        btn.className = "option-btn";
+        btn.onclick = () => evaluarRespuesta(btn, op.correcta);
+        opcionesDiv.appendChild(btn);
+      });
+
+      document.getElementById("feedback").textContent = "";
+    }
+
+    function evaluarRespuesta(boton, esCorrecta) {
+      document.querySelectorAll(".option-btn").forEach(btn => {
+        btn.disabled = true;
+        btn.style.cursor = "default";
+      });
+
+      if (esCorrecta) {
+        boton.classList.add("correct");
+        document.getElementById("feedback").textContent = "✅ Muy bien, esa es una acción apropiada para tu rol.";
+      } else {
+        boton.classList.add("incorrect");
+        document.getElementById("feedback").textContent = "❌ Esa acción no es apropiada. Intenta pensar en tu responsabilidad como " + rolSeleccionado + ".";
+      }
+    }
+  </script>
+</body>
+</html>

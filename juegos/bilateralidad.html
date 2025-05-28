@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Verdadero o Falso - Bilateralidad</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 2em;
+      background: #f0f4f8;
+      color: #333;
+      max-width: 600px;
+      margin: auto;
+    }
+    h1 {
+      color: #3f51b5;
+      text-align: center;
+      margin-bottom: 1em;
+    }
+    .question {
+      background: white;
+      padding: 1.5em;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgb(63 81 181 / 0.2);
+      margin-bottom: 1em;
+      min-height: 120px;
+    }
+    .question p {
+      font-size: 1.2em;
+      margin-bottom: 1em;
+    }
+    button.option {
+      padding: 0.7em 1.2em;
+      margin: 0.3em 0.5em 0.3em 0;
+      background: #3f51b5;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1em;
+      min-width: 100px;
+      transition: background-color 0.3s;
+    }
+    button.option:hover:not(:disabled) {
+      background-color: #2c3e9a;
+    }
+    button.option:disabled {
+      background-color: #9fa8da;
+      cursor: default;
+    }
+    #feedback {
+      margin-top: 1em;
+      font-weight: bold;
+      font-size: 1.1em;
+      min-height: 1.5em;
+    }
+    #next-btn {
+      display: none;
+      margin-top: 1em;
+      background-color: #4caf50;
+    }
+    #next-btn:hover {
+      background-color: #388e3c;
+    }
+    #score {
+      text-align: center;
+      margin-top: 2em;
+      font-size: 1.3em;
+      font-weight: bold;
+      color: #3f51b5;
+    }
+  </style>
+</head>
+<body>
+  <h1>Verdadero o Falso - Bilateralidad</h1>
+
+  <div class="question" id="question-container">
+    <p id="question-text">Cargando pregunta...</p>
+    <button class="option" id="true-btn">Verdadero</button>
+    <button class="option" id="false-btn">Falso</button>
+    <div id="feedback"></div>
+    <button id="next-btn">Siguiente</button>
+  </div>
+
+  <div id="score"></div>
+
+  <script>
+    const questions = [
+      {
+        text: "Un análisis bilateral implica dos partes.",
+        correct: true
+      },
+      {
+        text: "La bilateralidad significa que solo una parte toma decisiones.",
+        correct: false
+      },
+      {
+        text: "Los acuerdos bilaterales pueden beneficiar a ambas partes involucradas.",
+        correct: true
+      }
+    ];
+
+    let currentQuestion = 0;
+    let score = 0;
+
+    const questionText = document.getElementById('question-text');
+    const trueBtn = document.getElementById('true-btn');
+    const falseBtn = document.getElementById('false-btn');
+    const feedback = document.getElementById('feedback');
+    const nextBtn = document.getElementById('next-btn');
+    const scoreDiv = document.getElementById('score');
+
+    function loadQuestion() {
+      const q = questions[currentQuestion];
+      questionText.textContent = q.text;
+      feedback.textContent = '';
+      trueBtn.disabled = false;
+      falseBtn.disabled = false;
+      nextBtn.style.display = 'none';
+      trueBtn.style.backgroundColor = '#3f51b5';
+      falseBtn.style.backgroundColor = '#3f51b5';
+    }
+
+    function handleAnswer(userAnswer) {
+      trueBtn.disabled = true;
+      falseBtn.disabled = true;
+      nextBtn.style.display = 'inline-block';
+
+      const correctAnswer = questions[currentQuestion].correct;
+
+      if(userAnswer === correctAnswer) {
+        feedback.textContent = "¡Correcto!";
+        feedback.style.color = 'green';
+        if (userAnswer) trueBtn.style.backgroundColor = 'green';
+        else falseBtn.style.backgroundColor = 'green';
+        score++;
+      } else {
+        feedback.textContent = "Incorrecto.";
+        feedback.style.color = 'red';
+        if (userAnswer) trueBtn.style.backgroundColor = 'red';
+        else falseBtn.style.backgroundColor = 'red';
+      }
+    }
+
+    trueBtn.addEventListener('click', () => handleAnswer(true));
+    falseBtn.addEventListener('click', () => handleAnswer(false));
+
+    nextBtn.addEventListener('click', () => {
+      currentQuestion++;
+      if(currentQuestion < questions.length) {
+        loadQuestion();
+      } else {
+        questionText.textContent = "¡Juego terminado!";
+        trueBtn.style.display = 'none';
+        falseBtn.style.display = 'none';
+        nextBtn.style.display = 'none';
+        feedback.textContent = `Tu puntaje final es: ${score} de ${questions.length}.`;
+        feedback.style.color = '#3f51b5';
+        scoreDiv.textContent = "Gracias por jugar.";
+      }
+    });
+
+    loadQuestion();
+  </script>
+
+</body>
+</html>
+

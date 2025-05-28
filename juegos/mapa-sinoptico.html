@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Mapa Sinóptico</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 2em; background: #f0f4f8; color: #333; text-align: center; }
+    h1 { color: #3f51b5; }
+    .item {
+      margin: 1em auto;
+      padding: 1em;
+      width: 80%;
+      background: white;
+      border: 2px solid #3f51b5;
+      border-radius: 6px;
+    }
+    .select {
+      margin-top: 0.5em;
+      padding: 0.5em;
+      font-size: 1em;
+      border-radius: 5px;
+      border: 1px solid #3f51b5;
+    }
+    #feedback {
+      margin-top: 1.5em;
+      font-weight: bold;
+    }
+    button {
+      margin-top: 2em;
+      padding: 0.6em 1.2em;
+      background-color: #3f51b5;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .correct { background-color: #c8e6c9; border-color: green; }
+    .incorrect { background-color: #ffcdd2; border-color: red; }
+  </style>
+</head>
+<body>
+  <h1>Mapa Sinóptico - Clasificación</h1>
+  <p>Clasifica los siguientes elementos dentro del reino animal:</p>
+
+  <div class="item" data-correct="Vertebrado">
+    🐶 Perro
+    <br>
+    <select class="select">
+      <option value="">Selecciona una categoría</option>
+      <option value="Vertebrado">Vertebrado</option>
+      <option value="Invertebrado">Invertebrado</option>
+    </select>
+  </div>
+
+  <div class="item" data-correct="Invertebrado">
+    🐛 Gusano
+    <br>
+    <select class="select">
+      <option value="">Selecciona una categoría</option>
+      <option value="Vertebrado">Vertebrado</option>
+      <option value="Invertebrado">Invertebrado</option>
+    </select>
+  </div>
+
+  <div class="item" data-correct="Vertebrado">
+    🐟 Pez
+    <br>
+    <select class="select">
+      <option value="">Selecciona una categoría</option>
+      <option value="Vertebrado">Vertebrado</option>
+      <option value="Invertebrado">Invertebrado</option>
+    </select>
+  </div>
+
+  <button onclick="validar()">Validar Respuestas</button>
+  <div id="feedback"></div>
+
+  <script>
+    function validar() {
+      let correcto = true;
+      const items = document.querySelectorAll(".item");
+
+      items.forEach(item => {
+        const select = item.querySelector("select");
+        const seleccion = select.value;
+        const esperado = item.dataset.correct;
+
+        if (seleccion === esperado) {
+          item.classList.add("correct");
+        } else {
+          item.classList.add("incorrect");
+          correcto = false;
+        }
+
+        select.disabled = true;
+      });
+
+      const feedback = document.getElementById("feedback");
+      feedback.textContent = correcto
+        ? "✅ ¡Bien hecho! Clasificaste correctamente los elementos del mapa sinóptico."
+        : "❌ Algunos elementos fueron clasificados incorrectamente. Revisa tus selecciones.";
+      feedback.style.color = correcto ? "green" : "red";
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Juego de Diagrama de Venn - Frutas y Verduras</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 2em;
+      background: #f0f4f8;
+      color: #333;
+      max-width: 800px;
+      margin: auto;
+      user-select: none;
+    }
+    h1 {
+      color: #2c387e;
+      text-align: center;
+    }
+    p, .legend {
+      text-align: center;
+      margin-bottom: 1em;
+    }
+    .legend span {
+      display: inline-block;
+      padding: 0.3em 0.8em;
+      border-radius: 10px;
+      margin: 0 0.5em;
+      font-weight: bold;
+    }
+    .fruit { background: #ffcc80; color: #bf360c; }
+    .veg { background: #c8e6c9; color: #1b5e20; }
+    .both { background: #d1c4e9; color: #4a148c; }
+
+    #venn-container {
+      position: relative;
+      width: 600px;
+      height: 350px;
+      margin: 2em auto;
+    }
+    .circle {
+      position: absolute;
+      width: 280px;
+      height: 280px;
+      border-radius: 50%;
+      border: 3px solid #555;
+      display: flex;
+      flex-wrap: wrap;
+      padding: 10px;
+      box-sizing: border-box;
+      z-index: 1; /* para que la intersección esté encima */
+    }
+    #circleA {
+      left: 0;
+      top: 35px;
+      background-color: rgba(255, 204, 128, 0.4);
+    }
+    #circleB {
+      right: 0;
+      top: 35px;
+      background-color: rgba(200, 230, 201, 0.4);
+    }
+    #intersection {
+      position: absolute;
+      left: 160px;
+      top: 90px;
+      width: 180px;
+      height: 180px;
+      border-radius: 50%;
+      background-color: rgba(209, 196, 233, 0.6);
+      z-index: 2; /* para estar encima y captar eventos */
+      padding: 10px;
+      display: flex;
+      flex-wrap: wrap;
+      box-sizing: border-box;
+      border: 3px dashed #7e57c2;
+    }
+
+    .label {
+      width: 100%;
+      text-align: center;
+      font-weight: bold;
+      color: #333;
+      margin-bottom: 0.5em;
+    }
+
+    #elements-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      margin-bottom: 2em;
+    }
+
+    .element {
+      padding: 0.5em 1em;
+      background: #3949ab;
+      color: white;
+      border-radius: 15px;
+      cursor: grab;
+      transition: transform 0.2s;
+    }
+
+    .element.dragging {
+      opacity: 0.5;
+      transform: scale(1.05);
+    }
+
+    button {
+      display: block;
+      margin: 1em auto;
+      padding: 0.6em 1.5em;
+      background: #4caf50;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 1.1em;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+    button:hover {
+      background: #388e3c;
+    }
+
+    #result {
+      text-align: center;
+      font-weight: bold;
+      font-size: 1.2em;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Clasifica Frutas y Verduras</h1>
+  <p>Arrastra cada elemento al círculo que corresponda:</p>
+  <div class="legend">
+    <span class="fruit">Conjunto A = Frutas</span>
+    <span class="veg">Conjunto B = Verduras</span>
+    <span class="both">Intersección = Ambas</span>
+  </div>
+
+  <div id="venn-container">
+    <div id="circleA" class="circle">
+      <div class="label">Frutas</div>
+    </div>
+    <div id="circleB" class="circle">
+      <div class="label">Verduras</div>
+    </div>
+    <div id="intersection" class="circle" title="Frutas y Verduras">
+      <div class="label">Ambas</div>
+    </div>
+  </div>
+
+  <div id="elements-container">
+    <div class="element" draggable="true" data-set="A">Manzana</div>
+    <div class="element" draggable="true" data-set="B">Lechuga</div>
+    <div class="element" draggable="true" data-set="AB">Tomate</div>
+    <div class="element" draggable="true" data-set="A">Banana</div>
+    <div class="element" draggable="true" data-set="B">Zanahoria</div>
+    <div class="element" draggable="true" data-set="AB">Pepino</div>
+  </div>
+
+  <button id="check-btn">Revisar Respuesta</button>
+  <div id="result"></div>
+
+<script>
+  const elementsContainer = document.getElementById('elements-container');
+  const circleA = document.getElementById('circleA');
+  const circleB = document.getElementById('circleB');
+  const intersection = document.getElementById('intersection');
+  const checkBtn = document.getElementById('check-btn');
+  const resultDiv = document.getElementById('result');
+
+  let draggedElement = null;
+
+  document.querySelectorAll('.element').forEach(elem => {
+    elem.addEventListener('dragstart', e => {
+      draggedElement = e.target;
+      e.target.classList.add('dragging');
+    });
+    elem.addEventListener('dragend', e => {
+      draggedElement = null;
+      e.target.classList.remove('dragging');
+    });
+  });
+
+  [circleA, circleB, intersection, elementsContainer].forEach(container => {
+    container.addEventListener('dragover', e => e.preventDefault());
+    container.addEventListener('drop', e => {
+      e.preventDefault();
+      if (!draggedElement) return;
+      container.appendChild(draggedElement);
+    });
+  });
+
+  function checkAnswers() {
+    let total = 0, correct = 0;
+
+    document.querySelectorAll('.element').forEach(elem => {
+      total++;
+      const correctSet = elem.dataset.set;
+      let parentId = elem.parentElement.id;
+
+      if (parentId === 'intersection') parentId = 'AB';
+      if (parentId === 'circleA') parentId = 'A';
+      if (parentId === 'circleB') parentId = 'B';
+
+      if (correctSet === parentId) {
+        elem.style.backgroundColor = '#4caf50';
+        correct++;
+      } else {
+        elem.style.backgroundColor = '#e53935';
+      }
+    });
+
+    resultDiv.textContent = `Clasificación correcta: ${correct} de ${total}.`;
+  }
+
+  checkBtn.addEventListener('click', checkAnswers);
+</script>
+
+</body>
+</html>

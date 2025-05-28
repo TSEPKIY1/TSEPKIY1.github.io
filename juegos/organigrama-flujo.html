@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Juego: Organigrama de Flujo Comunicacional</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f0f4f8; margin: 0; padding: 2em; text-align: center; }
+    h2 { color: #3f51b5; }
+    .container { max-width: 900px; margin: auto; }
+    .columns {
+      display: flex;
+      justify-content: space-around;
+      flex-wrap: wrap;
+      margin-top: 2em;
+      gap: 2em;
+    }
+    .col { flex: 1; min-width: 250px; }
+    .item, .target {
+      padding: 0.8em;
+      margin: 0.5em 0;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-weight: bold;
+    }
+    .item {
+      background: #3f51b5;
+      color: white;
+      border: 2px solid transparent;
+    }
+    .item.selected {
+      outline: 3px solid orange;
+    }
+    .target {
+      background: #eee;
+      border: 2px dashed #ccc;
+      color: #333;
+    }
+    .matched {
+      background: #4caf50 !important;
+      color: white !important;
+      pointer-events: none;
+    }
+    .error {
+      background-color: #dc3545 !important;
+      color: white !important;
+    }
+    #result {
+      margin-top: 2em;
+      font-size: 1.2em;
+      font-weight: bold;
+      color: #2e7d32;
+      animation: fadeIn 1s ease-in-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>🔄 Organigrama de Flujo Comunicacional</h2>
+    <p><strong>Instrucción:</strong> Haz clic en un <span style="color:#3f51b5;">rol</span>, luego en la <span style="color:#333;">función</span> correspondiente.</p>
+
+    <div class="columns">
+      <div class="col" id="roles">
+        <div class="item" onclick="selectItem(this)" data-role="emisor">🎤 Emisor</div>
+        <div class="item" onclick="selectItem(this)" data-role="receptor">👂 Receptor</div>
+        <div class="item" onclick="selectItem(this)" data-role="canal">📡 Canal</div>
+        <div class="item" onclick="selectItem(this)" data-role="mensaje">📝 Mensaje</div>
+      </div>
+      <div class="col" id="funciones">
+        <div class="target" onclick="matchItem(this)" data-role="mensaje">Contenido enviado</div>
+        <div class="target" onclick="matchItem(this)" data-role="emisor">Inicia el mensaje</div>
+        <div class="target" onclick="matchItem(this)" data-role="receptor">Recibe e interpreta</div>
+        <div class="target" onclick="matchItem(this)" data-role="canal">Medio por el cual se transmite</div>
+      </div>
+    </div>
+
+    <div id="result"></div>
+  </div>
+
+  <script>
+    let selectedItem = null;
+    let matchedCount = 0;
+    let blocked = false;
+
+    function selectItem(el) {
+      if (el.classList.contains("matched") || blocked) return;
+      selectedItem = el;
+      document.querySelectorAll(".item").forEach(i => i.classList.remove("selected"));
+      el.classList.add("selected");
+    }
+
+    function matchItem(target) {
+      if (!selectedItem || target.classList.contains("matched") || blocked) return;
+
+      const roleA = selectedItem.getAttribute("data-role");
+      const roleB = target.getAttribute("data-role");
+
+      if (roleA === roleB) {
+        selectedItem.classList.add("matched");
+        target.classList.add("matched");
+        selectedItem.classList.remove("selected");
+        matchedCount++;
+        if (matchedCount === 4) {
+          document.getElementById("result").innerHTML = "🎉 <strong>¡Excelente! Emparejaste todos los elementos correctamente.</strong>";
+        }
+      } else {
+        blocked = true;
+        target.classList.add("error");
+        setTimeout(() => {
+          target.classList.remove("error");
+          blocked = false;
+        }, 1000);
+      }
+
+      selectedItem.classList.remove("selected");
+      selectedItem = null;
+    }
+  </script>
+</body>
+</html>

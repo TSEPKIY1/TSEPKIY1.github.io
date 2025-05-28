@@ -1,0 +1,131 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Grupo de Expertos</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 2em; background: #f0f4f8; color: #333; }
+    h1 { color: #3f51b5; }
+    .question-box { margin-bottom: 2em; }
+    .option {
+      display: block;
+      margin: 0.5em 0;
+      padding: 0.5em 1em;
+      background: #fff;
+      border: 2px solid #3f51b5;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .option:hover {
+      background: #e8eaf6;
+    }
+    .correct {
+      background-color: #c8e6c9;
+      border-color: green;
+    }
+    .incorrect {
+      background-color: #ffcdd2;
+      border-color: red;
+    }
+    #feedback {
+      margin-top: 1em;
+      font-weight: bold;
+    }
+    #nextBtn {
+      margin-top: 2em;
+      display: none;
+      padding: 0.6em 1.2em;
+      background: #3f51b5;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h1>Grupo de Expertos</h1>
+  <div id="quiz">
+    <div class="question-box">
+      <p id="question">Cargando pregunta...</p>
+      <div id="options"></div>
+      <div id="feedback"></div>
+      <button id="nextBtn" onclick="siguientePregunta()">Siguiente</button>
+    </div>
+  </div>
+
+  <script>
+    const preguntas = [
+      {
+        texto: "¿Qué experto invitarías para hablar sobre biodiversidad?",
+        opciones: ["Biólogo", "Economista", "Historiador"],
+        correcta: "Biólogo"
+      },
+      {
+        texto: "¿Quién es el más adecuado para hablar sobre inflación?",
+        opciones: ["Biólogo", "Economista", "Psicólogo"],
+        correcta: "Economista"
+      },
+      {
+        texto: "¿Qué profesional puede tratar trastornos de ansiedad?",
+        opciones: ["Psicólogo", "Ingeniero", "Geógrafo"],
+        correcta: "Psicólogo"
+      }
+    ];
+
+    let preguntaActual = 0;
+
+    function cargarPregunta() {
+      const pregunta = preguntas[preguntaActual];
+      document.getElementById("question").textContent = pregunta.texto;
+
+      const opcionesDiv = document.getElementById("options");
+      opcionesDiv.innerHTML = "";
+
+      pregunta.opciones.forEach(opcion => {
+        const btn = document.createElement("button");
+        btn.textContent = opcion;
+        btn.className = "option";
+        btn.onclick = () => evaluarRespuesta(btn, opcion === pregunta.correcta);
+        opcionesDiv.appendChild(btn);
+      });
+
+      document.getElementById("feedback").textContent = "";
+      document.getElementById("nextBtn").style.display = "none";
+    }
+
+    function evaluarRespuesta(boton, esCorrecta) {
+      const botones = document.querySelectorAll(".option");
+      botones.forEach(b => {
+        b.disabled = true;
+        b.style.cursor = "default";
+      });
+
+      if (esCorrecta) {
+        boton.classList.add("correct");
+        document.getElementById("feedback").textContent = "✅ ¡Correcto!";
+      } else {
+        boton.classList.add("incorrect");
+        document.getElementById("feedback").textContent = "❌ Incorrecto.";
+      }
+
+      document.getElementById("nextBtn").style.display = "inline-block";
+    }
+
+    function siguientePregunta() {
+      preguntaActual++;
+      if (preguntaActual < preguntas.length) {
+        cargarPregunta();
+      } else {
+        document.getElementById("quiz").innerHTML = "<h2>🎉 ¡Has completado el juego!</h2>";
+      }
+    }
+
+    // Iniciar
+    cargarPregunta();
+  </script>
+</body>
+</html>

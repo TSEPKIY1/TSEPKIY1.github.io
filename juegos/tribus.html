@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Juego de Memoria - Tribu Pedagógica</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f4f8;
+      color: #333;
+      padding: 2em;
+      text-align: center;
+    }
+    h1 { color: #3f51b5; }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(4, 120px);
+      gap: 1em;
+      justify-content: center;
+      margin-top: 2em;
+    }
+    .card {
+      width: 100%;
+      height: 100px;
+      background: #3f51b5;
+      color: white;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 14px;
+      user-select: none;
+      padding: 8px;
+      text-align: center;
+    }
+    .flipped {
+      background: #fff;
+      color: #333;
+      border: 2px solid #3f51b5;
+    }
+    .matched {
+      background: #c8e6c9 !important;
+      color: #2e7d32 !important;
+      cursor: default;
+    }
+    #mensaje {
+      margin-top: 1em;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h1>Juego de Memoria - Tribu en la Pedagogía</h1>
+  <p>Empareja los conceptos pedagógicos con sus significados.</p>
+
+  <div class="grid" id="tablero"></div>
+  <div id="mensaje"></div>
+
+  <script>
+    const pares = [
+      { texto: "Apoyo mutuo", id: 1 },
+      { texto: "Red de sostén emocional, recursos e información", id: 1 },
+
+      { texto: "Educación colaborativa", id: 2 },
+      { texto: "Responsabilidad compartida entre familia, escuela y comunidad", id: 2 },
+
+      { texto: "Experiencia compartida", id: 3 },
+      { texto: "Aprendizaje a través de la interacción con otros", id: 3 },
+
+      { texto: "Fomento de la convivencia", id: 4 },
+      { texto: "Ambiente de respeto y desarrollo emocional", id: 4 },
+
+      { texto: "Red de apoyo", id: 5 },
+      { texto: "Familiares, amigos y profesionales que participan en la educación", id: 5 },
+
+      { texto: "Tribu educativa", id: 6 },
+      { texto: "La comunidad como actor clave en el desarrollo infantil", id: 6 }
+    ];
+
+    let seleccionadas = [];
+    let tablero = document.getElementById("tablero");
+
+    function mezclar(array) {
+      return array.sort(() => 0.5 - Math.random());
+    }
+
+    function crearTablero() {
+      const cartas = mezclar([...pares]);
+      cartas.forEach((item, index) => {
+        const div = document.createElement("div");
+        div.className = "card";
+        div.dataset.id = item.id;
+        div.dataset.index = index;
+        div.textContent = "";
+        div.onclick = () => voltearCarta(div, item.texto);
+        tablero.appendChild(div);
+      });
+    }
+
+    function voltearCarta(carta, texto) {
+      if (carta.classList.contains("flipped") || carta.classList.contains("matched") || seleccionadas.length === 2) return;
+
+      carta.textContent = texto;
+      carta.classList.add("flipped");
+      seleccionadas.push(carta);
+
+      if (seleccionadas.length === 2) {
+        setTimeout(() => comprobarPareja(), 800);
+      }
+    }
+
+    function comprobarPareja() {
+      const [c1, c2] = seleccionadas;
+      if (c1.dataset.id === c2.dataset.id && c1.dataset.index !== c2.dataset.index) {
+        c1.classList.remove("flipped");
+        c2.classList.remove("flipped");
+        c1.classList.add("matched");
+        c2.classList.add("matched");
+        mostrarMensaje("✅ ¡Pareja correcta!");
+      } else {
+        c1.classList.remove("flipped");
+        c2.classList.remove("flipped");
+        c1.textContent = "";
+        c2.textContent = "";
+        mostrarMensaje("❌ No coinciden, intenta de nuevo.");
+      }
+      seleccionadas = [];
+      verificarFinal();
+    }
+
+    function mostrarMensaje(msg) {
+      document.getElementById("mensaje").textContent = msg;
+    }
+
+    function verificarFinal() {
+      const restantes = document.querySelectorAll(".card:not(.matched)");
+      if (restantes.length === 0) {
+        mostrarMensaje("🎉 ¡Has completado el juego sobre la tribu en pedagogía!");
+      }
+    }
+
+    crearTablero();
+  </script>
+</body>
+</html>

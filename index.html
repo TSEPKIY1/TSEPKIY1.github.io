@@ -1,0 +1,203 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Educación Interactiva</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      font-family: 'Roboto', sans-serif;
+      background: linear-gradient(to right, #dbeafe, #fce4ec);
+      color: #333;
+    }
+    header {
+      background: #1e3a8a;
+      color: white;
+      padding: 3em 1em;
+      text-align: center;
+      border-bottom: 6px solid #818cf8;
+    }
+    header h1 {
+      font-size: 2.5em;
+      margin-bottom: 0.3em;
+    }
+    header p {
+      font-size: 1.2em;
+    }
+
+    nav {
+      padding: 2em 1em;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1em;
+      background: #fff;
+    }
+
+    nav .card {
+      background: white;
+      border: 2px solid #1e40af;
+      border-radius: 12px;
+      padding: 1em;
+      width: 200px;
+      text-align: center;
+      font-weight: bold;
+      color: #1e40af;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+      transition: transform 0.2s, box-shadow 0.3s;
+    }
+
+    nav .card:hover {
+      background: #1e40af;
+      color: white;
+      transform: translateY(-5px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    main {
+      max-width: 800px;
+      margin: 2em auto;
+      background: #ffffff;
+      padding: 2em;
+      border-radius: 16px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.08);
+      transition: all 0.3s ease;
+      opacity: 0;
+      transform: translateY(30px);
+      animation: fadeSlideIn 0.6s ease forwards;
+    }
+
+    @keyframes fadeSlideIn {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    main h2 {
+      color: #1e40af;
+      margin-bottom: 0.5em;
+    }
+
+    main p {
+      font-size: 1.1em;
+      line-height: 1.6;
+    }
+
+    button {
+      margin-top: 1.5em;
+      background: #1e40af;
+      color: white;
+      padding: 0.75em 1.5em;
+      border: none;
+      border-radius: 8px;
+      font-size: 1em;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    button:hover {
+      background: #3749c5;
+    }
+
+    @media (max-width: 600px) {
+      nav .card {
+        width: 100%;
+      }
+      main {
+        margin: 1em;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Plataforma de Aprendizaje Interactivo</h1>
+    <p>Haz clic en cada tema para explorar su contenido y jugar para aprender</p>
+  </header>
+  <nav>
+
+   <nav id="tabs"></nav>
+  <main id="content-area">
+    <h2>Bienvenido</h2>
+    <p>Selecciona un tema del menú para ver el contenido y acceder al juego correspondiente.</p>
+  </main>
+    <audio id="click-sound" src="https://www.soundjay.com/buttons/sounds/button-29.mp3" preload="auto"></audio>
+  <script>
+    const temas = {
+      "clase-magistral": {
+        titulo: "Clase Magistral",
+        descripcion: "Es una modalidad de enseñanza en la que un experto o profesor expone un tema de forma clara y estructurada frente a un grupo de estudiantes, con el objetivo de transmitir conocimientos específicos de manera directa y formal.",
+        juego: "juegos/clase-magistral.html" },
+      "tribus": { titulo: "Tribus", descripcion: "Es un grupo de aprendizaje basado en la colaboración, el apoyo mutuo y el sentido de pertenencia, donde los miembros (estudiantes y docentes) se acompañan en el proceso educativo, fomentando relaciones afectivas, el respeto, la inclusión y la construcción colectiva del conocimiento.", juego: "juegos/tribus.html" },
+      "organigrama": { titulo: "Organigrama Flujo Comunicacional", descripcion: "Es una representación gráfica que muestra cómo se transmite la información dentro de una organización, destacando los canales, direcciones y tipos de comunicación entre las distintas áreas o personas.", juego: "juegos/organigrama.html" },
+      "juegos-roles": { titulo: "Juegos de Roles", descripcion: "Es una dinámica participativa en la que los participantes asumen y representan personajes o situaciones específicas, con el objetivo de simular experiencias reales o ficticias. A través del juego de rol, se promueve la empatía, la toma de decisiones, la resolución de conflictos y el aprendizaje activo, especialmente útil en contextos educativos y formativos.", juego: "juegos/juegos-roles.html" },
+      "sinopsis": { titulo: "Sinopsis", descripcion: "Es un resumen breve y general de una obra, historia, película, libro, proyecto o situación, que presenta los aspectos más importantes como el tema central, los personajes principales y el conflicto, sin revelar todos los detalles ni el desenlace. Su propósito es informar de forma clara y concisa sobre el contenido para despertar interés.", juego: "juegos/sinopsis.html" },
+      "articulos": { titulo: "Artículos", descripcion: "Es un texto escrito que desarrolla y comunica información, ideas, opiniones o investigaciones sobre un tema específico. Puede aparecer en medios impresos o digitales como periódicos, revistas, blogs o publicaciones académicas. Su estructura suele incluir un título, introducción, desarrollo y conclusión. Existen distintos tipos, como artículos informativos, de opinión, científicos o periodísticos.", juego: "juegos/articulos.html" },
+      "mesa-redonda": { titulo: "Mesa Redonda", descripcion: "Es una técnica de discusión en la que un grupo de personas expertas o con diferentes puntos de vista se reúnen para debatir un tema específico de manera abierta y equitativa, generalmente frente a un público. Todos los participantes tienen el mismo nivel de importancia en la conversación, y se busca el intercambio de ideas, el respeto y el enriquecimiento del tema tratado.", juego: "juegos/mesa-redonda.html" },
+      "diagrama-venn": { titulo: "Diagrama de Venn", descripcion: "Es una representación gráfica que utiliza círculos superpuestos para mostrar las relaciones entre distintos conjuntos. Cada círculo representa un conjunto, y las áreas donde se cruzan indican los elementos que tienen en común. Se utiliza para comparar, clasificar y analizar similitudes y diferencias entre conceptos, grupos u objetos.", juego: "juegos/diagrama-venn.html" },
+      "foro": { titulo: "Foro", descripcion: "Es un espacio de diálogo y discusión, presencial o virtual, donde varias personas expresan sus ideas, opiniones o conocimientos sobre un tema determinado. Su propósito es el intercambio libre y respetuoso de puntos de vista, fomentando la participación y el aprendizaje colectivo.", juego: "juegos/foro.html" },
+      "mapa-conceptual": { titulo: "Mapa Conceptual", descripcion: "Es una herramienta gráfica que organiza y representa el conocimiento mediante conceptos clave, conectados entre sí por líneas y palabras de enlace que muestran relaciones jerárquicas y lógicas. Se utiliza para facilitar la comprensión, el estudio y la memorización de información, destacando ideas principales y secundarias de un tema.", juego: "juegos/mapa-conceptual.html" },
+      "mapa-mental": { titulo: "Mapa Mental", descripcion: "Es una representación visual que organiza ideas o información alrededor de un concepto central, usando ramas, colores e imágenes para mostrar relaciones y jerarquías de manera creativa y no lineal. Se utiliza para facilitar el pensamiento, la memorización, la planificación y la generación de ideas.", juego: "juegos/mapa-mental.html" },
+      "mapa-actores": { titulo: "Mapa de Actores", descripcion: "Es una representación visual que identifica y organiza a las personas, grupos u organizaciones que intervienen o tienen interés en un proyecto, situación o problema. Muestra sus roles, relaciones, influencias y niveles de poder, facilitando el análisis de cómo interactúan y afectan el desarrollo o resultado del proceso estudiado.", juego: "juegos/mapa-actores.html" },
+      "bilateralidad": { titulo: "Análisis de Bilateralidad", descripcion: "Es el estudio que examina la relación y las interacciones entre dos partes o actores, evaluando cómo influyen mutuamente, cuáles son sus intereses, responsabilidades y beneficios compartidos, así como el equilibrio o desequilibrio en esa relación. Se usa para entender acuerdos, negociaciones o colaboraciones en contextos sociales, económicos, políticos o educativos.", juego: "juegos/bilateralidad.html" },
+      "cronica": { titulo: "Crónica", descripcion: "Es un relato ordenado y detallado de hechos o acontecimientos reales, presentados de manera cronológica. Suele incluir descripciones, contexto y opiniones del autor, con el propósito de informar, narrar o reflejar experiencias vividas en un evento o situación.", juego: "juegos/cronica.html" },
+      "grupo-expertos": { titulo: "Grupo de Expertos", descripcion: "Es un conjunto de personas con conocimientos especializados y experiencia en un área determinada, que se reúnen para analizar, discutir y ofrecer recomendaciones o soluciones sobre un tema específico, apoyando la toma de decisiones o la elaboración de proyectos.", juego: "juegos/grupo-expertos.html" },
+      "panel-expertos": { titulo: "Panel de Expertos", descripcion: "Es una reunión o discusión pública donde varios especialistas en un tema particular expresan sus opiniones, análisis y recomendaciones frente a una audiencia, con el fin de debatir y profundizar en un asunto específico desde distintas perspectivas.", juego: "juegos/panel-expertos.html" },
+      "ilustraciones": { titulo: "Ilustraciones", descripcion: "Son imágenes, dibujos o gráficos que acompañan y complementan un texto para facilitar su comprensión, hacer más atractiva la presentación o explicar visualmente conceptos, ideas o historias. Pueden ser artísticas, técnicas o informativas.", juego: "juegos/ilustraciones.html" },
+      "videos": { titulo: "Videos", descripcion: "Son grabaciones audiovisuales que combinan imágenes en movimiento, sonido y, a veces, texto, para comunicar información, contar historias, enseñar, entretener o persuadir a una audiencia. Pueden presentarse en diversos formatos y plataformas.", juego: "juegos/videos.html" },
+      "modelomun": { titulo: "Modelo MUN", descripcion: "Es una simulación educativa donde estudiantes representan a distintos países en una asamblea similar a la ONU, debatiendo temas internacionales, negociando acuerdos y desarrollando habilidades de diplomacia, negociación, investigación y oratoria.", juego: "juegos/modelomun.html" },
+      "organigrama-flujo": { titulo: "Organigrama de Flujo", descripcion: "Es una representación gráfica que muestra el proceso o secuencia de actividades, decisiones y pasos que se siguen para realizar una tarea o función dentro de una organización. Utiliza símbolos como flechas, rectángulos y diamantes para indicar acciones, decisiones y direcciones del flujo de trabajo.", juego: "juegos/organigrama-flujo.html" },
+      "resena": { titulo: "Reseña", descripcion: "Es un texto breve que describe, analiza y evalúa una obra, evento, producto o experiencia, destacando sus características principales, fortalezas y debilidades, con el fin de informar y orientar al lector o público interesado.", juego: "juegos/resena.html" },
+      "mapa-sinoptico": { titulo: "Mapa Sinóptico", descripcion: "Es una representación gráfica que organiza la información de manera jerárquica y estructurada, usando llaves o corchetes para mostrar las ideas principales y sus detalles o subtemas, facilitando la comprensión global y la relación entre conceptos.", juego: "juegos/mapa-sinoptico.html" },
+      "cuadro-comparativo": { titulo: "Cuadro Comparativo", descripcion: "Es una tabla organizada que permite visualizar y analizar las semejanzas y diferencias entre dos o más elementos, conceptos, ideas o fenómenos, facilitando su comparación clara y estructurada.", juego: "juegos/cuadro-comparativo.html" },
+      "pestel": { titulo: "Análisis PESTEL", descripcion: "Es una herramienta que examina los factores externos que pueden afectar a una organización o proyecto, clasificándolos en seis categorías: Políticos, Económicos, Sociales, Tecnológicos, Ecológicos (ambientales) y Legales. Se usa para entender el entorno y anticipar oportunidades o amenazas.", juego: "juegos/pestel.html" }
+    };
+    
+    const tabs = document.getElementById("tabs");
+    const audio = document.getElementById("click-sound");
+
+    for (const id in temas) {
+      const item = temas[id];
+      const el = document.createElement("div");
+      el.className = "card";
+      el.innerText = item.titulo;
+      el.onclick = () => {
+        audio.currentTime = 0;
+        audio.play();
+        showContent(id);
+      };
+      tabs.appendChild(el);
+    }
+
+    function showContent(id) {
+      const tema = temas[id];
+      if (!tema) return;
+
+      const contentArea = document.getElementById("content-area");
+      contentArea.style.opacity = 0;
+      contentArea.style.transform = "translateY(30px)";
+      contentArea.innerHTML = `
+        <h2>${tema.titulo}</h2>
+        <p>${tema.descripcion}</p>
+        <a href="${tema.juego}" target="_blank">
+          <button>Jugar Interactivo</button>
+        </a>
+      `;
+      requestAnimationFrame(() => {
+        contentArea.style.animation = "none";
+        void contentArea.offsetWidth; // Forzar reflow
+        contentArea.style.animation = "fadeSlideIn 0.6s ease forwards";
+      });
+    }
+  </script>
+</body>
+</html>

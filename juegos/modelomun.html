@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Modelo MUN - Simulación</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 2em;
+      background: #f0f4f8;
+      color: #333;
+      max-width: 600px;
+      margin: auto;
+    }
+    h1 {
+      color: #3f51b5;
+      text-align: center;
+      margin-bottom: 1em;
+    }
+    .question-container {
+      background: white;
+      padding: 1.5em;
+      border-radius: 10px;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+      margin-bottom: 2em;
+    }
+    .options {
+      margin-bottom: 1em;
+    }
+    button.option {
+      display: block;
+      width: 100%;
+      margin: 0.5em 0;
+      padding: 0.75em;
+      font-size: 1em;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      background: #3f51b5;
+      color: white;
+      transition: background 0.3s ease;
+    }
+    button.option:hover:not(:disabled) {
+      background: #303f9f;
+    }
+    button.option:disabled {
+      background: #9fa8da;
+      cursor: default;
+    }
+    .feedback {
+      font-weight: bold;
+      margin-bottom: 1em;
+      min-height: 1.5em;
+      font-size: 1.1em;
+    }
+    .feedback.correct {
+      color: green;
+    }
+    .feedback.incorrect {
+      color: red;
+    }
+    .nav-buttons {
+      display: flex;
+      justify-content: space-between;
+    }
+    button#next-btn, button#restart-btn {
+      padding: 0.5em 1.2em;
+      font-size: 1em;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      background: #4caf50;
+      color: white;
+      transition: background 0.3s ease;
+    }
+    button#next-btn:disabled {
+      background: #a5d6a7;
+      cursor: default;
+    }
+    button#restart-btn {
+      background: #f44336;
+      margin-left: auto;
+    }
+    .score {
+      text-align: center;
+      font-size: 1.2em;
+      margin-bottom: 1em;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Modelo MUN - Simulación</h1>
+
+  <div class="score" id="score"></div>
+
+  <div class="question-container">
+    <p id="question-text"></p>
+    <div class="options">
+      <button class="option" id="btn1"></button>
+      <button class="option" id="btn2"></button>
+      <button class="option" id="btn3"></button>
+      <button class="option" id="btn4"></button>
+    </div>
+    <div class="feedback" id="feedback"></div>
+    <div class="nav-buttons">
+      <button id="next-btn" disabled>Siguiente</button>
+      <button id="restart-btn" style="display:none;">Reiniciar</button>
+    </div>
+  </div>
+
+  <script>
+    const questions = [
+      {
+        question: 'Como delegado de un país en desarrollo, ¿qué acción apoyas más?',
+        options: [
+          'Propuesta de ayuda climática conjunta',
+          'Bloquear propuestas de otros países',
+          'Ignorar problemas internacionales',
+          'Promover intereses nacionales solo'
+        ],
+        answer: 0,
+        explanation: '¡Correcto! Refleja cooperación internacional, fundamental en un Modelo MUN.'
+      },
+      {
+        question: '¿Cuál es la mejor forma de resolver un conflicto internacional?',
+        options: [
+          'Mediante diálogo y negociaciones',
+          'Usando la fuerza militar',
+          'Imponiendo sanciones sin diálogo',
+          'Ignorando el problema'
+        ],
+        answer: 0,
+        explanation: 'Así es, el diálogo y las negociaciones son clave para resolver conflictos pacíficamente.'
+      },
+      {
+        question: '¿Qué papel tiene un delegado responsable en una simulación MUN?',
+        options: [
+          'Representar con honestidad la posición de su país',
+          'Ignorar las reglas y hacer lo que quiera',
+          'Buscar ventaja personal a cualquier costo',
+          'Interrumpir constantemente a otros delegados'
+        ],
+        answer: 0,
+        explanation: 'Exacto, un delegado responsable representa con honestidad y respeto a su país.'
+      }
+    ];
+
+    let currentQuestion = 0;
+    let score = 0;
+
+    const questionText = document.getElementById('question-text');
+    const btns = [
+      document.getElementById('btn1'),
+      document.getElementById('btn2'),
+      document.getElementById('btn3'),
+      document.getElementById('btn4')
+    ];
+    const feedback = document.getElementById('feedback');
+    const nextBtn = document.getElementById('next-btn');
+    const restartBtn = document.getElementById('restart-btn');
+    const scoreDiv = document.getElementById('score');
+
+    function loadQuestion() {
+      const q = questions[currentQuestion];
+      questionText.textContent = q.question;
+      q.options.forEach((opt, i) => {
+        btns[i].textContent = opt;
+        btns[i].disabled = false;
+        btns[i].style.backgroundColor = '#3f51b5';
+        btns[i].style.display = 'block';
+      });
+      feedback.textContent = '';
+      feedback.className = 'feedback';
+      nextBtn.disabled = true;
+      restartBtn.style.display = 'none';
+      updateScore();
+    }
+
+    function updateScore() {
+      scoreDiv.textContent = `Pregunta ${currentQuestion + 1} de ${questions.length} | Puntaje: ${score}`;
+    }
+
+    btns.forEach((btn, idx) => {
+      btn.addEventListener('click', () => {
+        const q = questions[currentQuestion];
+        btns.forEach(b => b.disabled = true);
+
+        if(idx === q.answer) {
+          score++;
+          feedback.textContent = q.explanation;
+          feedback.className = 'feedback correct';
+          btn.style.backgroundColor = '#4caf50'; // verde
+        } else {
+          feedback.textContent = `Incorrecto. ${q.explanation}`;
+          feedback.className = 'feedback incorrect';
+          btn.style.backgroundColor = '#f44336'; // rojo
+          btns[q.answer].style.backgroundColor = '#4caf50'; // respuesta correcta en verde
+        }
+
+        nextBtn.disabled = false;
+        updateScore();
+      });
+    });
+
+    nextBtn.addEventListener('click', () => {
+      currentQuestion++;
+      if(currentQuestion >= questions.length) {
+        questionText.textContent = '¡Simulación terminada! Gracias por participar.';
+        feedback.textContent = `Tu puntaje final es ${score} de ${questions.length}.`;
+        feedback.className = 'feedback';
+        btns.forEach(b => b.style.display = 'none');
+        nextBtn.style.display = 'none';
+        restartBtn.style.display = 'inline-block';
+        scoreDiv.textContent = '';
+      } else {
+        loadQuestion();
+      }
+    });
+
+    restartBtn.addEventListener('click', () => {
+      currentQuestion = 0;
+      score = 0;
+      btns.forEach(b => b.style.display = 'block');
+      nextBtn.style.display = 'inline-block';
+      loadQuestion();
+    });
+
+    loadQuestion();
+  </script>
+
+</body>
+</html>
+

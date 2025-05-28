@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ordenar Sinopsis</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f0f4f8; color: #333; padding: 2em; text-align: center; }
+    h1 { color: #3f51b5; }
+    ul {
+      list-style-type: none;
+      padding: 0;
+      width: 60%;
+      margin: 0 auto;
+    }
+    li {
+      margin: 10px 0;
+      padding: 1em;
+      background: white;
+      border: 2px solid #3f51b5;
+      border-radius: 8px;
+      cursor: move;
+    }
+    .correct { background-color: #c8e6c9; border-color: green; }
+    .incorrect { background-color: #ffcdd2; border-color: red; }
+    button {
+      margin-top: 2em;
+      padding: 0.6em 1.2em;
+      background-color: #3f51b5;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    #feedback { margin-top: 1em; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h1>Ordenar Sinopsis</h1>
+  <p>Arrastra los pasos de una historia para ordenarlos correctamente:</p>
+
+  <ul id="lista" ondragover="permitirSoltar(event)">
+    <li draggable="true" ondragstart="iniciarArrastre(event)">📌 Resolución final</li>
+    <li draggable="true" ondragstart="iniciarArrastre(event)">📌 Introducción del conflicto</li>
+    <li draggable="true" ondragstart="iniciarArrastre(event)">📌 Desarrollo de la trama</li>
+  </ul>
+
+  <button onclick="verificarOrden()">Validar Orden</button>
+  <div id="feedback"></div>
+
+  <script>
+    let elementoArrastrado = null;
+
+    function iniciarArrastre(ev) {
+      elementoArrastrado = ev.target;
+    }
+
+    function permitirSoltar(ev) {
+      ev.preventDefault();
+      const objetivo = ev.target;
+      if (objetivo.tagName === "LI" && objetivo !== elementoArrastrado) {
+        const lista = objetivo.parentNode;
+        const hijos = Array.from(lista.children);
+        const indiceOrigen = hijos.indexOf(elementoArrastrado);
+        const indiceDestino = hijos.indexOf(objetivo);
+
+        if (indiceOrigen < indiceDestino) {
+          lista.insertBefore(elementoArrastrado, objetivo.nextSibling);
+        } else {
+          lista.insertBefore(elementoArrastrado, objetivo);
+        }
+      }
+    }
+
+    function verificarOrden() {
+      const elementos = document.querySelectorAll("#lista li");
+      const ordenCorrecto = [
+        "📌 Introducción del conflicto",
+        "📌 Desarrollo de la trama",
+        "📌 Resolución final"
+      ];
+
+      let correcto = true;
+      elementos.forEach((el, i) => {
+        el.classList.remove("correct", "incorrect");
+        if (el.textContent.trim() === ordenCorrecto[i]) {
+          el.classList.add("correct");
+        } else {
+          el.classList.add("incorrect");
+          correcto = false;
+        }
+      });
+
+      const feedback = document.getElementById("feedback");
+      feedback.textContent = correcto
+        ? "✅ ¡Muy bien! La sinopsis está correctamente ordenada."
+        : "❌ El orden es incorrecto. Revisa los pasos.";
+      feedback.style.color = correcto ? "green" : "red";
+    }
+  </script>
+</body>
+</html>
+

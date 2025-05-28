@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Juego: Clase Magistral</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f0f0;
+      margin: 0;
+      padding: 2em;
+    }
+    .quiz-container {
+      max-width: 600px;
+      margin: auto;
+      background: white;
+      padding: 2em;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    .question {
+      font-weight: bold;
+      margin-top: 1.5em;
+    }
+    .options {
+      list-style: none;
+      padding: 0;
+    }
+    .options li {
+      margin: 0.5em 0;
+    }
+    button {
+      margin-top: 1em;
+      padding: 0.5em 1em;
+      background: #3f51b5;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #303f9f;
+    }
+    .feedback {
+      margin-top: 1em;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="quiz-container">
+    <h2>Trivia: ¿Qué sabes sobre Clase Magistral?</h2>
+    <div id="quiz"></div>
+    <div id="feedback" class="feedback"></div>
+    <button onclick="nextQuestion()">Siguiente</button>
+  </div>
+
+  <script>
+    const questions = [
+      {
+        q: "¿Qué caracteriza una clase magistral?",
+        options: ["Participación activa del público", "Exposición oral de un experto", "Debate grupal", "Trabajo en equipo"],
+        answer: 1
+      },
+      {
+        q: "¿Cuál es una desventaja común de la clase magistral?",
+        options: ["Demasiada interacción", "Falta de estructura", "Poca participación del estudiante", "Poca profundidad en los temas"],
+        answer: 2
+      },
+      {
+        q: "¿Cuál es un recurso común en clases magistrales modernas?",
+        options: ["TikToks", "Presentaciones multimedia", "Notas manuscritas", "Memes"],
+        answer: 1
+      }
+    ];
+
+    let current = 0;
+
+    function renderQuestion() {
+      const q = questions[current];
+      const container = document.getElementById("quiz");
+      const feedback = document.getElementById("feedback");
+      feedback.textContent = "";
+      container.innerHTML = `
+        <div class="question">${q.q}</div>
+        <ul class="options">
+          ${q.options.map((opt, i) => `
+            <li><input type="radio" name="option" value="${i}" id="opt${i}" />
+            <label for="opt${i}">${opt}</label></li>
+          `).join('')}
+        </ul>
+      `;
+    }
+
+    function nextQuestion() {
+      const selected = document.querySelector('input[name="option"]:checked');
+      const feedback = document.getElementById("feedback");
+
+      if (!selected) {
+        feedback.textContent = "Selecciona una respuesta antes de continuar.";
+        return;
+      }
+
+      const isCorrect = parseInt(selected.value) === questions[current].answer;
+      feedback.textContent = isCorrect ? "✅ ¡Correcto!" : "❌ Incorrecto. Intenta repasar el contenido.";
+
+      current++;
+      if (current < questions.length) {
+        setTimeout(renderQuestion, 1500);
+      } else {
+        setTimeout(() => {
+          document.getElementById("quiz").innerHTML = "<h3>🎉 ¡Has completado el juego!</h3>";
+          feedback.textContent = "";
+        }, 1500);
+      }
+    }
+
+    renderQuestion();
+  </script>
+</body>
+</html>

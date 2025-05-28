@@ -1,0 +1,112 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mapa Conceptual - Relacionar Conceptos</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 2em;
+      background: #f0f4f8;
+      color: #333;
+      text-align: center;
+    }
+
+    h1 { color: #3f51b5; }
+
+    .container {
+      display: flex;
+      justify-content: space-around;
+      margin-top: 2em;
+    }
+
+    .col {
+      display: flex;
+      flex-direction: column;
+      gap: 1em;
+    }
+
+    .box {
+      padding: 1em;
+      background: white;
+      border: 2px solid #3f51b5;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.3s;
+      font-weight: bold;
+    }
+
+    .selected {
+      background-color: #e3f2fd;
+      outline: 2px dashed orange;
+    }
+
+    .matched {
+      background-color: #c8e6c9 !important;
+      border-color: green !important;
+      pointer-events: none;
+    }
+
+    #feedback {
+      margin-top: 2em;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h1>🧩 Mapa Conceptual: Relacionar Conceptos</h1>
+  <p>Haz clic en un concepto de la izquierda y luego en su relación correcta a la derecha.</p>
+
+  <div class="container">
+    <div class="col" id="conceptosA">
+      <div class="box" data-id="1" onclick="seleccionar(this, 'A')">Energía</div>
+      <div class="box" data-id="2" onclick="seleccionar(this, 'A')">Fuerza</div>
+      <div class="box" data-id="3" onclick="seleccionar(this, 'A')">Velocidad</div>
+    </div>
+    <div class="col" id="conceptosB">
+      <div class="box" data-id="1" onclick="seleccionar(this, 'B')">Capacidad de realizar trabajo</div>
+      <div class="box" data-id="2" onclick="seleccionar(this, 'B')">Interacción que cambia el estado de movimiento</div>
+      <div class="box" data-id="3" onclick="seleccionar(this, 'B')">Rapidez del cambio de posición</div>
+    </div>
+  </div>
+
+  <div id="feedback"></div>
+
+  <script>
+    let seleccionadoA = null;
+
+    function seleccionar(el, grupo) {
+      if (grupo === "A") {
+        if (el.classList.contains("matched")) return;
+        document.querySelectorAll("#conceptosA .box").forEach(b => b.classList.remove("selected"));
+        seleccionadoA = el;
+        el.classList.add("selected");
+      } else if (grupo === "B") {
+        if (!seleccionadoA || el.classList.contains("matched")) return;
+
+        const idA = seleccionadoA.getAttribute("data-id");
+        const idB = el.getAttribute("data-id");
+
+        if (idA === idB) {
+          seleccionadoA.classList.add("matched");
+          el.classList.add("matched");
+          document.getElementById("feedback").textContent = "✅ ¡Conexión correcta!";
+          document.getElementById("feedback").style.color = "green";
+        } else {
+          document.getElementById("feedback").textContent = "❌ Esa relación no es correcta.";
+          document.getElementById("feedback").style.color = "red";
+        }
+
+        seleccionadoA.classList.remove("selected");
+        seleccionadoA = null;
+
+        if (document.querySelectorAll(".matched").length === 6) {
+          document.getElementById("feedback").innerHTML = "🎉 ¡Completaste todas las relaciones del mapa conceptual!";
+        }
+      }
+    }
+  </script>
+</body>
+</html>

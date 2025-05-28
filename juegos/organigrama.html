@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Organigrama de Flujo</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f0f4f8; color: #333; padding: 2em; text-align: center; }
+    h1 { color: #3f51b5; }
+    .area-organigrama {
+      display: flex;
+      justify-content: center;
+      gap: 2em;
+      flex-wrap: wrap;
+      margin: 2em 0;
+    }
+    .dropzone {
+      width: 200px;
+      height: 100px;
+      border: 2px dashed #aaa;
+      border-radius: 8px;
+      padding: 1em;
+      text-align: center;
+      line-height: 80px;
+      background-color: white;
+      font-weight: bold;
+    }
+    .draggable {
+      display: inline-block;
+      padding: 0.6em 1em;
+      background: #3f51b5;
+      color: white;
+      border-radius: 6px;
+      cursor: grab;
+      margin: 0.5em;
+    }
+    .correct { background-color: #c8e6c9 !important; border-color: green !important; }
+    .incorrect { background-color: #ffcdd2 !important; border-color: red !important; }
+  </style>
+</head>
+<body>
+  <h1>Organigrama de Flujo</h1>
+  <p>Arrastra y suelta los roles en el nivel jerárquico correcto.</p>
+
+  <div>
+    <span class="draggable" draggable="true" data-role="Director">👔 Director</span>
+    <span class="draggable" draggable="true" data-role="Coordinador">📋 Coordinador</span>
+    <span class="draggable" draggable="true" data-role="Docente">👩‍🏫 Docente</span>
+    <span class="draggable" draggable="true" data-role="Estudiante">🎓 Estudiante</span>
+  </div>
+
+  <div class="area-organigrama">
+    <div class="dropzone" data-correct="Director" ondragover="allowDrop(event)" ondrop="handleDrop(event)">Nivel 1</div>
+    <div class="dropzone" data-correct="Coordinador" ondragover="allowDrop(event)" ondrop="handleDrop(event)">Nivel 2</div>
+    <div class="dropzone" data-correct="Docente" ondragover="allowDrop(event)" ondrop="handleDrop(event)">Nivel 3</div>
+    <div class="dropzone" data-correct="Estudiante" ondragover="allowDrop(event)" ondrop="handleDrop(event)">Nivel 4</div>
+  </div>
+
+  <script>
+    let dragged = null;
+
+    document.querySelectorAll('.draggable').forEach(item => {
+      item.addEventListener('dragstart', e => {
+        dragged = item;
+      });
+    });
+
+    function allowDrop(e) {
+      e.preventDefault();
+    }
+
+    function handleDrop(e) {
+      e.preventDefault();
+      const zona = e.target;
+      const esperado = zona.dataset.correct;
+      const rol = dragged.dataset.role;
+
+      zona.textContent = dragged.textContent;
+
+      if (rol === esperado) {
+        zona.classList.add("correct");
+        zona.classList.remove("incorrect");
+      } else {
+        zona.classList.add("incorrect");
+        zona.classList.remove("correct");
+      }
+
+      dragged.style.display = "none";
+    }
+  </script>
+</body>
+</html>

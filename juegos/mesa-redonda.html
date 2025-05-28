@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mesa Redonda - Debate</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 2em; background: #f0f4f8; color: #333; }
+    h1 { color: #3f51b5; }
+    .option {
+      padding: 0.5em 1em;
+      background: #fff;
+      color: #333;
+      border: 2px solid #3f51b5;
+      border-radius: 5px;
+      cursor: pointer;
+      margin: 0.5em 0;
+      display: block;
+      transition: background 0.2s ease;
+    }
+    .option:hover {
+      background: #e8eaf6;
+    }
+    .correct {
+      background-color: #c8e6c9;
+      border-color: green;
+    }
+    .incorrect {
+      background-color: #ffcdd2;
+      border-color: red;
+    }
+    .feedback {
+      margin-top: 1em;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h1>Mesa Redonda - Debate</h1>
+
+  <p>Elige el argumento más sólido sobre el cambio climático:</p>
+
+  <button class="option" onclick="seleccionar(this, true)">
+    Los datos científicos muestran un aumento de temperatura
+  </button>
+  <button class="option" onclick="seleccionar(this, false)">
+    Siempre ha hecho calor en verano
+  </button>
+
+  <div id="feedback" class="feedback"></div>
+
+  <script>
+    function seleccionar(elemento, esCorrecto) {
+      const opciones = document.querySelectorAll(".option");
+      opciones.forEach(btn => {
+        btn.disabled = true;
+        btn.style.cursor = "default";
+      });
+
+      if (esCorrecto) {
+        elemento.classList.add("correct");
+        document.getElementById("feedback").textContent = "✅ ¡Correcto! Se basa en evidencia científica.";
+      } else {
+        elemento.classList.add("incorrect");
+        document.getElementById("feedback").textContent = "❌ Incorrecto. Este argumento no tiene base científica.";
+      }
+    }
+  </script>
+</body>
+</html>
